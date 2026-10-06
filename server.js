@@ -2,11 +2,16 @@ const http = require('http');
 const fs = require('fs');
 const path = require('path');
 const crypto = require('crypto');
+const { Pool } = require('pg');
 
 const PORT = process.env.PORT || 3000;
 const PUBLIC = path.join(__dirname, 'public');
 const DATA = path.join(__dirname, 'data');
 const sessions = new Map();
+
+let dbPool = null;
+const dbCache = new Map();
+const DB_FILES = ['appointments.json','patients.json','roles.json','attendance.json','users.json','periods.json','messages.json','expenditures.json'];
 
 const BUILTIN_ROLES = ['admin','doctor','nurse','pharmacy','laboratory','reception'];
 const ROLE_FILE = path.join(DATA,'roles.json');
@@ -29,8 +34,48 @@ const ROLE_PERMISSIONS = Object.fromEntries(Object.entries(ROLE_MAP).map(([k,v])
 const EXPENSE_CATEGORY = Object.fromEntries(Object.entries(ROLE_MAP).map(([k,v])=>[k,k==='admin'?'General':v.label+' / Expenditure']));
 function roleLabel(role){ return ROLE_MAP[role]?.label || role; }
 
-function read(name, fallback=[]) { try { return JSON.parse(fs.readFileSync(path.join(DATA,name),'utf8')); } catch { return fallback; } }
-function write(name,data) { fs.writeFileSync(path.join(DATA,name), JSON.stringify(data,null,2)); }
+function read(name, fallback=[]) {
+  if (dbCache.has(name)) return dbCache.get(name);
+  try { return JSON.parse(fs.readFileSync(path.join(DATA,name),'utf8')); } catch { return fallback; }
+}
+
+function write(name,data) {
+  dbCache.set(name, data);
+  try { fs.writeFileSync(path.join(DATA,name), JSON.stringify(data,null,2)); } catch {}
+  if (dbPool) {
+    dbPool.query('INSERT INTO app_data (name, data, updated_at) VALUES ($1,$2::jsonb,NOW()) ON CONFLICT (name) DO UPDATE SET data=EXCLUDED.data, updated_at=NOW()', [name, JSON.stringify(data)]).catch(err => console.error('PostgreSQL save error:', err.message));
+  }
+}
+
+async function initDatabase() {
+  if (!process.env.DATABASE_URL) return false;
+  dbPool = new Pool({ connectionString: process.env.DATABASE_URL, ssl: { rejectUnauthorized: false }, max: 5, idleTimeoutMillis: 30000 });
+  await dbPool.query('CREATE TABLE IF NOT EXISTS app_data (name TEXT PRIMARY KEY, data JSONB NOT NULL, updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW())');
+  for (const name of DB_FILES) {
+    const result = await dbPool.query('SELECT data FROM app_data WHERE name=$1', [name]);
+    if (result.rows.length) {
+      dbCache.set(name, result.rows[0].data);
+    } else {
+      const local = read(name, []);
+      dbCache.set(name, local);
+      await dbPool.query('INSERT INTO app_data (name, data, updated_at) VALUES ($1,$2::jsonb,NOW()) ON CONFLICT (name) DO NOTHING', [name, JSON.stringify(local)]);
+    }
+  }
+  console.log('PostgreSQL persistence enabled');
+  return true;
+}
+
+function refreshRoleState() {
+  const fresh = loadRoles();
+  for (const key of Object.keys(ROLE_MAP)) delete ROLE_MAP[key];
+  Object.assign(ROLE_MAP, fresh);
+  ROLES.length = 0;
+  ROLES.push(...Object.keys(ROLE_MAP));
+  for (const key of Object.keys(ROLE_PERMISSIONS)) delete ROLE_PERMISSIONS[key];
+  for (const [key,value] of Object.entries(ROLE_MAP)) ROLE_PERMISSIONS[key] = value.permissions;
+  for (const key of Object.keys(EXPENSE_CATEGORY)) delete EXPENSE_CATEGORY[key];
+  for (const [key,value] of Object.entries(ROLE_MAP)) EXPENSE_CATEGORY[key] = key === 'admin' ? 'General' : value.label + ' / Expenditure';
+}
 function now(){ return new Date().toISOString(); }
 function moneyTotal(e){ return (Number(e.unitPrice)||0) * Math.max(1, Number(e.quantity)||1); }
 function hashPassword(password,saltHex){ return crypto.scryptSync(password,Buffer.from(saltHex,'hex'),64).toString('hex'); }
@@ -64,8 +109,6 @@ function staticFile(req,res){
   if(!file.startsWith(PUBLIC)){res.writeHead(403);return res.end('Forbidden')}
   fs.readFile(file,(err,data)=>{if(err){res.writeHead(404);return res.end('Not found')}const ext=path.extname(file);const types={'.html':'text/html','.css':'text/css','.js':'application/javascript','.svg':'image/svg+xml','.png':'image/png','.jpg':'image/jpeg','.jpeg':'image/jpeg','.webp':'image/webp'};res.writeHead(200,{'Content-Type':types[ext]||'text/plain'});res.end(data);});
 }
-ensureExpenditures();
-
 const server=http.createServer(async(req,res)=>{
   if(req.method==='OPTIONS'){res.writeHead(204,{'Access-Control-Allow-Origin':'*','Access-Control-Allow-Credentials':'true','Access-Control-Allow-Methods':'GET,POST,OPTIONS','Access-Control-Allow-Headers':'Content-Type'});return res.end();}
   try{
@@ -168,6 +211,15 @@ const server=http.createServer(async(req,res)=>{
     return send(res,404,{error:'API endpoint not found'});
   }catch(e){console.error(e);send(res,500,{error:'Server error'});}
 });
-server.listen(PORT, "0.0.0.0", () => {
-  console.log(`Hospital Management System running on port ${PORT}`);
-});
+async function startServer() {
+  try {
+    await initDatabase();
+    refreshRoleState();
+    ensureExpenditures();
+    server.listen(PORT, '0.0.0.0', () => console.log(`Hospital Management System running on port ${PORT}`));
+  } catch (err) {
+    console.error('Database startup error:', err);
+    process.exit(1);
+  }
+}
+startServer();

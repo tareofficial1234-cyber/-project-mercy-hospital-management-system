@@ -1,4 +1,4 @@
 PROJECT MERCY MEDINALEM HOSPITAL MANAGEMENT SYSTEM
-Version 3.1 - Private credentials interface update
+Version 4.0 - PostgreSQL persistence for Render
 
-Professional emails and passwords are not displayed in the UI. Passwords are masked during login and stored server-side as hashes.
+Uses DATABASE_URL for PostgreSQL persistence on Render and falls back to local JSON files when DATABASE_URL is not set.

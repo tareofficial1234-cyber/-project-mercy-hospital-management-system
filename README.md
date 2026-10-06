@@ -57,3 +57,8 @@ For production/online deployment, replace local JSON storage with a real databas
 
 ## Admin Profession & Role Management
 Administrators can create new professions from Users & Roles, select permissions, and create staff accounts assigned to any profession.
+
+
+## Render PostgreSQL persistence
+
+Set the Render Web Service environment variable `DATABASE_URL` to the PostgreSQL database Internal Database URL. The server creates an `app_data` table automatically and imports existing JSON data on first connection. Do not commit the database URL or password to Git.
