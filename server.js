@@ -168,4 +168,6 @@ const server=http.createServer(async(req,res)=>{
     return send(res,404,{error:'API endpoint not found'});
   }catch(e){console.error(e);send(res,500,{error:'Server error'});}
 });
-server.listen(PORT,()=>console.log(`Hospital Management System running at http://localhost:${PORT}`));
+server.listen(PORT, "0.0.0.0", () => {
+  console.log(`Hospital Management System running on port ${PORT}`);
+});
