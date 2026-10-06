@@ -1,0 +1,56 @@
+[
+  {
+    "id": "admin",
+    "email": "admin@pmmhospital.com",
+    "name": "Hospital Admin",
+    "role": "admin",
+    "profession": "Administrator",
+    "salt": "87d9cbf0b722c7cb96627b1644b733e1",
+    "passwordHash": "665ba7b8065356a289a5f00512bb85b28f37883ed3cdce6aa3e2af12fdbcc194c87cc067fef09193fb2dff71752ba4f902bda447bd4c8708ce6f2105da28f240"
+  },
+  {
+    "id": "doctor",
+    "email": "doctor@pmmhospital.com",
+    "name": "Dr. Abebe Kebede",
+    "role": "doctor",
+    "profession": "Doctor",
+    "salt": "b379b24216b4e6554cd48f0e7397c5d5",
+    "passwordHash": "a55aa1678a9865275cc46118b8d504419b57064956a7e351d8d55b9540b55a3925872811c1234015e09191d99eb5250afe1d7bd41ebde5727bca47ccf37ae15a"
+  },
+  {
+    "id": "nurse",
+    "email": "nurse@pmmhospital.com",
+    "name": "Nurse Hana",
+    "role": "nurse",
+    "profession": "Nurse",
+    "salt": "3458b6bddcd4137b6330dc02b0c0b75e",
+    "passwordHash": "7a1fd3139f6f6a7aeb706e294c4e598a7b268fbf169631ab63b8b855cc5a923e7658088b56fbf44045a2faca05d4a4f4c6b6f3c0ad5266a28fdf828257fca9bb"
+  },
+  {
+    "id": "pharmacy",
+    "email": "pharmacy@pmmhospital.com",
+    "name": "Pharmacy Staff",
+    "role": "pharmacy",
+    "profession": "Pharmacist",
+    "salt": "8d5f53fbf66e53cdc761f50b5bfc6ce7",
+    "passwordHash": "27a5dd0f63788dd23e07a0d2780cc50929929cd29d41e6db605628554b27c97d66c5f58dab4b1d022da93074ff51bdef1045abeddb93a44dd6359b37b712bf5a"
+  },
+  {
+    "id": "lab",
+    "email": "lab@pmmhospital.com",
+    "name": "Laboratory Staff",
+    "role": "laboratory",
+    "profession": "Laboratory",
+    "salt": "3a3d18dee69d2b6fd6941cdfc32e5f04",
+    "passwordHash": "2323307f4f704293ce609e71b96085edebc2813a88f522e83dd93edae161d14128982bd921e0597a3d1793a25239f2e56fbbd83edbae88de4c2ad1de0c05607a"
+  },
+  {
+    "id": "reception",
+    "email": "reception@pmmhospital.com",
+    "name": "Reception Staff",
+    "role": "reception",
+    "profession": "Receptionist",
+    "salt": "e9756106a70e722083596ba3635b4ff6",
+    "passwordHash": "5740c080c9fb9b32a1e6ea6e3f2d7e1e4dd89c18776a96e81dad7af9e8fcaccb250d7496a83d606f9d1af54a2df094d3f07b3c7534e24de97995cc4f875528a6"
+  }
+]

@@ -1,0 +1,4 @@
+PROJECT MERCY MEDINALEM HOSPITAL MANAGEMENT SYSTEM
+Version 3.1 - Private credentials interface update
+
+Professional emails and passwords are not displayed in the UI. Passwords are masked during login and stored server-side as hashes.

@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 260" role="img" aria-label="Modern hospital illustration">
+<defs><linearGradient id="g" x1="0" x2="1"><stop stop-color="#0d2f4f"/><stop offset="1" stop-color="#1677c8"/></linearGradient></defs>
+<rect width="900" height="260" rx="24" fill="url(#g)"/><circle cx="760" cy="45" r="90" fill="#ffffff" opacity=".08"/><circle cx="120" cy="230" r="100" fill="#ffffff" opacity=".06"/>
+<rect x="90" y="68" width="330" height="150" rx="12" fill="#fff" opacity=".97"/><rect x="125" y="35" width="260" height="35" rx="8" fill="#eaf5fc"/><path d="M255 35v-22h30v22" fill="#d9eef9"/><path d="M255 105h40v-40h35v40h40v35h-40v40h-35v-40h-40z" fill="#1677c8"/>
+<g fill="#b9d8ea"><rect x="125" y="160" width="42" height="30" rx="4"/><rect x="182" y="160" width="42" height="30" rx="4"/><rect x="310" y="160" width="42" height="30" rx="4"/><rect x="367" y="160" width="42" height="30" rx="4"/></g>
+<path d="M485 218c35-65 75-105 120-105 45 0 68 39 105 105" fill="none" stroke="#fff" stroke-width="5" opacity=".8"/><circle cx="605" cy="92" r="27" fill="#fff" opacity=".92"/><path d="M573 132c16-27 48-27 64 0l18 45h-100z" fill="#fff" opacity=".92"/><text x="485" y="55" fill="#fff" font-family="Arial,sans-serif" font-size="25" font-weight="700">MEDINALEM HOSPITAL</text><text x="485" y="78" fill="#ccecff" font-family="Arial,sans-serif" font-size="13">Integrated care • Pharmacy • Laboratory • Patient Services</text>
+</svg>
